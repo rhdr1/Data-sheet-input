@@ -1,0 +1,6 @@
+{
+  "name": "Spreadsheet Data Input",
+  "description": "An application to view, verify, and input data into each sheet of a Google Spreadsheet.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

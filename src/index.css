@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Custom Themes mapping over Tailwind's default zinc and emerald palettes */
+:root[data-theme="navy"] {
+  --color-zinc-950: #020617;
+  --color-zinc-900: #0f172a;
+  --color-zinc-850: #162032; /* manual interpolate */
+  --color-zinc-800: #1e293b;
+  --color-zinc-700: #334155;
+  --color-zinc-650: #3b4b63; /* manual interpolate */
+  --color-zinc-600: #475569;
+  --color-zinc-500: #64748b;
+  --color-zinc-400: #94a3b8;
+  --color-zinc-300: #cbd5e1;
+  --color-zinc-200: #e2e8f0;
+  --color-zinc-100: #f1f5f9;
+  --color-zinc-50: #f8fafc;
+  
+  --color-emerald-500: #3b82f6;
+  --color-emerald-400: #60a5fa;
+  --color-emerald-950: #172554;
+  --color-emerald-900: #1e3a8a;
+  --color-emerald-450: #458cf7; 
+}
+
+:root[data-theme="coffee"] {
+  --color-zinc-950: #1c140d;
+  --color-zinc-900: #2d1f14;
+  --color-zinc-850: #36261a;
+  --color-zinc-800: #453223;
+  --color-zinc-700: #6b4d37;
+  --color-zinc-650: #7d5b42;
+  --color-zinc-600: #8c6042;
+  --color-zinc-500: #a17353;
+  --color-zinc-400: #b89176;
+  --color-zinc-300: #e8d5c8;
+  --color-zinc-200: #f4e8e1;
+  --color-zinc-100: #fbf5f2;
+  --color-zinc-50: #fdfaf8;
+
+  --color-emerald-500: #d97706;
+  --color-emerald-400: #fbbf24;
+  --color-emerald-950: #451a03;
+  --color-emerald-900: #78350f;
+  --color-emerald-450: #ea9815;
+}
+
+:root[data-theme="midnight"] {
+  --color-zinc-950: #0f0728;
+  --color-zinc-900: #1a0f3c;
+  --color-zinc-850: #23164d;
+  --color-zinc-800: #2e1d5e;
+  --color-zinc-700: #472d8a;
+  --color-zinc-650: #5537a3;
+  --color-zinc-600: #6842c9;
+  --color-zinc-500: #8b5cf6;
+  --color-zinc-400: #a78bfa;
+  --color-zinc-300: #c4b5fd;
+  --color-zinc-200: #ddd6fe;
+  --color-zinc-100: #ede9fe;
+  --color-zinc-50: #f5f3ff;
+
+  --color-emerald-500: #a855f7;
+  --color-emerald-400: #c084fc;
+  --color-emerald-950: #3b0764;
+  --color-emerald-900: #581c87;
+  --color-emerald-450: #b16df8;
+}
+
+/* Customize active highlights & scrollbars for Bento grid */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(63, 63, 70, 0.5) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(63, 63, 70, 0.5);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(82, 82, 91, 0.7);
+}

@@ -501,7 +501,7 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
               <Clock className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="font-extrabold text-white text-xs uppercase tracking-wider">Sesi & Tanggal</h4>
+              <h4 className="font-extrabold text-zinc-100 text-xs uppercase tracking-wider">Sesi & Tanggal</h4>
               <p className="text-[10px] text-zinc-500">Acuan utama sebelum absen diisi</p>
             </div>
           </div>
@@ -553,7 +553,7 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
               <Users className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="font-extrabold text-white text-xs uppercase tracking-wider">Database Kelas Siswa</h4>
+              <h4 className="font-extrabold text-zinc-100 text-xs uppercase tracking-wider">Database Kelas Siswa</h4>
               <p className="text-[10px] text-zinc-500">Pilih tab spreadsheet asal murid</p>
             </div>
           </div>
@@ -634,7 +634,7 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
             <div className="sm:flex items-center justify-between pb-5 border-b border-zinc-800 gap-4 mb-5">
               <div className="space-y-1 mb-3 sm:mb-0">
                 <div className="flex items-center gap-2.5">
-                  <h3 className="font-black text-white text-base font-display uppercase tracking-tight">
+                  <h3 className="font-black text-zinc-100 text-base font-display uppercase tracking-tight">
                     Daftar Absensi Siswa
                   </h3>
                   <span className="bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-mono text-[10px] px-2 py-0.5 rounded-lg font-extrabold">
@@ -898,7 +898,7 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
             <div className="text-left">
               <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Ringkasan Kiriman:</span>
               <p className="text-xs font-bold text-zinc-300">
-                Poin & Absensi untuk <strong className="text-white font-black">{filteredStudents.length}</strong> siswa siap diunggah sekaligus.
+                Poin & Absensi untuk <strong className="text-zinc-100 font-black">{filteredStudents.length}</strong> siswa siap diunggah sekaligus.
               </p>
             </div>
             <button

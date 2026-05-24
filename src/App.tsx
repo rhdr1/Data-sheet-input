@@ -11,6 +11,25 @@ import { SpreadsheetInfo, SheetAudit } from "./types";
 import { GsiButton } from "./components/GsiButton";
 import { SpreadsheetLoader } from "./components/SpreadsheetLoader";
 import { AttendanceForm } from "./components/AttendanceForm";
+import { APP_CONFIG } from "./config";
+
+/** Skeleton placeholder shown while initial data loads. */
+function SkeletonCard({ rows = 3, tall = false }: { rows?: number; tall?: boolean }) {
+  return (
+    <div className="relative bg-zinc-900/60 border border-zinc-800 rounded-sm p-5 overflow-hidden" style={{ minHeight: tall ? 500 : "auto" }}>
+      <div className="absolute inset-2 border pointer-events-none" style={{ borderColor: "var(--color-gold)", opacity: 0.08 }} />
+      <div className="relative space-y-3">
+        <div className="h-3 bg-zinc-800/70 rounded-sm shimmer" style={{ width: "40%" }} />
+        <div className="h-2 bg-zinc-800/50 rounded-sm shimmer" style={{ width: "70%" }} />
+        <div className="pt-3 space-y-2.5">
+          {Array.from({ length: rows }).map((_, i) => (
+            <div key={i} className="h-9 bg-zinc-800/40 rounded-sm shimmer" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 import {
   FileSpreadsheet,
   LogOut,
@@ -28,11 +47,17 @@ export default function App() {
   const [needsAuth, setNeedsAuth] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // Spreadsheet state
-  // Pre-load the spreadsheet ID specified in the prompt
+  // Spreadsheet state — default from APP_CONFIG, user can override via Settings
   const [currentSpreadsheetId, setCurrentSpreadsheetId] = useState(
-    "1tDFYyLBJedRa02s5Nb4GAg1Ro22sp-LnmG3nxU2fFys"
+    () => localStorage.getItem("last_spreadsheet_id") || APP_CONFIG.defaultSpreadsheetId
   );
+
+  // Persist last used spreadsheet so it's remembered next session
+  useEffect(() => {
+    if (currentSpreadsheetId) {
+      localStorage.setItem("last_spreadsheet_id", currentSpreadsheetId);
+    }
+  }, [currentSpreadsheetId]);
   const [spreadsheetInfo, setSpreadsheetInfo] =
     useState<SpreadsheetInfo | null>(null);
   const [selectedTab, setSelectedTab] = useState<string>("");
@@ -46,7 +71,7 @@ export default function App() {
 
   // App settings state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [targetSheetName, setTargetSheetName] = useState("gudang");
+  const [targetSheetName, setTargetSheetName] = useState(APP_CONFIG.defaultTargetSheet);
   const [isTargetLocked, setIsTargetLocked] = useState(false);
   const [appTheme, setAppTheme] = useState("dark"); // 'dark' | 'navy' | 'coffee' | 'midnight'
 
@@ -270,63 +295,109 @@ export default function App() {
   };
 
   return (
-    <div id="full-app-root" className="min-h-screen bg-zinc-950 text-zinc-100 font-sans antialiased pb-24">
-      {/* Top Header Navigation bar */}
-      <header className="bg-zinc-900/60 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-emerald-500 text-zinc-950 p-2.5 rounded-xl font-bold shadow-md shadow-emerald-500/10">
-              <UserCheck className="w-5 h-5" />
+    <div id="full-app-root" className="min-h-screen bg-zinc-950 text-zinc-100 font-sans antialiased pb-24 relative overflow-x-hidden">
+      {/* Background atmosphere — radial warmth + ornament */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-0">
+        <div className="absolute inset-0 opacity-[0.04]" style={{
+          backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.45 0 0 0 0 0.30 0 0 0 0.8 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+        }} />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60rem] h-[40rem] rounded-full opacity-[0.08]"
+          style={{ background: "radial-gradient(closest-side, var(--color-gold), transparent 70%)" }} />
+        <div className="absolute -bottom-40 right-0 w-[40rem] h-[40rem] rounded-full opacity-[0.06]"
+          style={{ background: "radial-gradient(closest-side, var(--color-emerald-500), transparent 70%)" }} />
+      </div>
+
+      {/* Top Header Navigation bar — editorial style */}
+      <header className="relative bg-zinc-950/70 backdrop-blur-xl border-b border-zinc-800/60 sticky top-0 z-40">
+        {/* Gold hairline accent */}
+        <div className="absolute inset-x-0 top-0 h-px" style={{
+          background: "linear-gradient(to right, transparent, var(--color-gold) 25%, var(--color-gold) 75%, transparent)",
+          opacity: 0.45,
+        }} />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {/* Crest mark — checklist + pen */}
+            <div className="relative w-11 h-11 flex items-center justify-center shrink-0">
+              <div className="absolute inset-0 rounded-md border" style={{
+                borderColor: "var(--color-gold)",
+                opacity: 0.5,
+              }} />
+              <div className="absolute inset-1 rounded-sm" style={{ background: "var(--color-emerald-900)" }} />
+              <svg viewBox="0 0 32 32" className="relative w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-gold-pale)" }}>
+                {/* Document */}
+                <path d="M9 5 L20 5 L24 9 L24 25 L9 25 Z" />
+                {/* Folded corner */}
+                <path d="M20 5 L20 9 L24 9" />
+                {/* Checkbox 1 */}
+                <rect x="11.5" y="11.5" width="2" height="2" rx="0.3" />
+                <path d="M15 12.5 L19.5 12.5" />
+                {/* Checkbox 2 */}
+                <rect x="11.5" y="15.5" width="2" height="2" rx="0.3" />
+                <path d="M15 16.5 L19.5 16.5" />
+                {/* Checkbox 3 */}
+                <rect x="11.5" y="19.5" width="2" height="2" rx="0.3" />
+                <path d="M15 20.5 L17.5 20.5" />
+                {/* Pencil accent */}
+                <path d="M22.5 17 L27 21.5 L25 23.5 L20.5 19 Z" stroke="var(--color-gold)" strokeWidth="1.2" />
+                <path d="M20.5 19 L20 24 L25 23.5" stroke="var(--color-gold)" strokeWidth="1.2" />
+              </svg>
             </div>
-            <div>
-              <h1 className="font-extrabold text-white tracking-tight text-sm sm:text-base font-display uppercase">
-                Aplikasi Input Absensi Guru
-              </h1>
-              <p className="text-[10px] sm:text-xs text-zinc-400 font-medium">
-                Pilih kelas dan input data kehadiran siswa dengan cepat
+
+            {/* Wordmark */}
+            <div className="flex flex-col leading-tight">
+              <div className="flex items-baseline gap-2">
+                <h1 className="font-display text-lg sm:text-xl text-zinc-100 tracking-tight font-medium">
+                  Mulazamah
+                </h1>
+                <span className="font-arabic text-base text-zinc-400 hidden sm:inline" dir="rtl">المُلازَمَة</span>
+              </div>
+              <p className="text-[10px] sm:text-[11px] text-zinc-500 font-medium tracking-[0.18em] uppercase">
+                Sistem Input Data Santri
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {user && (
-              <div className="flex items-center gap-2.5 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-xl">
+              <div className="flex items-center gap-2 sm:gap-3 bg-zinc-900/80 border border-zinc-800 px-2.5 py-1.5 rounded-full">
                 {user.photoURL ? (
                   <img
                     src={user.photoURL}
                     alt={user.displayName || "User"}
-                    className="w-6 h-6 rounded-full border border-zinc-700"
+                    className="w-7 h-7 rounded-full border"
+                    style={{ borderColor: "var(--color-gold)" }}
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="w-6 h-6 bg-emerald-500 text-zinc-950 text-xs font-bold rounded-full flex items-center justify-center">
+                  <div className="w-7 h-7 text-zinc-950 text-xs font-bold rounded-full flex items-center justify-center font-display"
+                    style={{ background: "var(--color-gold)" }}>
                     {user.displayName?.charAt(0) || "U"}
                   </div>
                 )}
-                <div className="hidden sm:block text-left">
-                  <p className="text-xs font-bold text-zinc-200 leading-tight">
+                <div className="hidden md:block text-left">
+                  <p className="text-[11px] font-semibold text-zinc-200 leading-tight font-sans">
                     {user.displayName}
                   </p>
-                  <p className="text-[10px] text-zinc-500 truncate max-w-[120px]">
+                  <p className="text-[9px] text-zinc-500 truncate max-w-[140px] font-mono">
                     {user.email}
                   </p>
                 </div>
                 <button
                   id="header-settings-btn"
                   onClick={() => setIsSettingsOpen(true)}
-                  className="p-1 text-zinc-400 hover:text-emerald-400 transition-colors ml-2 cursor-pointer"
+                  className="p-1.5 text-zinc-400 hover:text-zinc-100 transition-colors ml-1 cursor-pointer rounded-full"
                   title="Pengaturan"
                 >
-                  <Settings className="w-4 h-4" />
+                  <Settings className="w-3.5 h-3.5" />
                 </button>
-                <div className="w-px h-4 bg-zinc-700 mx-1"></div>
                 <button
                   id="header-logout-btn"
                   onClick={handleLogout}
-                  className="p-1 text-zinc-400 hover:text-rose-400 transition-colors cursor-pointer"
-                  title="Sign Out"
+                  className="p-1.5 text-zinc-400 hover:text-rose-400 transition-colors cursor-pointer rounded-full"
+                  title="Keluar"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
             )}
@@ -335,40 +406,95 @@ export default function App() {
       </header>
 
       {/* Main Workspace Frame container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+      <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-14 space-y-8">
         {/* Auth Block overlay if needed credentials are unauthenticated */}
         {needsAuth ? (
-          <div className="max-w-md mx-auto bg-zinc-900 rounded-3xl border border-zinc-800 p-8 shadow-2xl text-center mt-12">
-            <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mx-auto mb-6 border border-emerald-500/20">
-              <FileSpreadsheet className="w-8 h-8" />
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-lg mx-auto mt-6 sm:mt-12"
+          >
+            {/* Eyebrow */}
+            <div className="text-center mb-3">
+              <span className="inline-block text-[10px] tracking-[0.45em] uppercase font-bold text-zinc-500">
+                Sistem Mahad
+              </span>
             </div>
-            <h2 className="text-2xl font-black text-white tracking-tight mb-2 font-display">
-              Google Sheet Connection Required
-            </h2>
-            <p className="text-sm text-zinc-400 mb-8 max-w-sm mx-auto leading-relaxed">
-              Login securely with Google to inspect spreadsheet tabs structure, view empty cells instantly, and submit perfect row inputs.
-            </p>
-            <GsiButton onClick={handleLogin} isLoading={isLoggingIn} />
-            {spreadsheetError && (
-              <div className="mt-6 p-4 bg-rose-950/40 border border-rose-900 text-rose-300 rounded-2xl text-xs font-semibold">
-                {spreadsheetError}
+
+            {/* Card */}
+            <div className="relative bg-zinc-900/70 backdrop-blur-sm border border-zinc-800 rounded-sm overflow-hidden">
+              {/* Inner gold hairline */}
+              <div className="absolute inset-[6px] border pointer-events-none" style={{ borderColor: "var(--color-gold)", opacity: 0.18 }} />
+
+              <div className="relative px-7 sm:px-10 py-10 sm:py-12 text-center">
+                {/* Bismillah — Arabic ornament */}
+                <p className="font-arabic text-2xl sm:text-[28px] leading-tight mb-6"
+                  style={{ color: "var(--color-gold-pale)" }} dir="rtl">
+                  ﷽
+                </p>
+
+                {/* Display heading */}
+                <h2 className="font-display text-3xl sm:text-4xl text-zinc-50 leading-[1.05] tracking-tight mb-3"
+                  style={{ fontWeight: 400 }}>
+                  Selamat datang,
+                  <br />
+                  <em className="not-italic" style={{ fontStyle: "italic", color: "var(--color-emerald-400)" }}>Ustadz.</em>
+                </h2>
+
+                {/* Sub */}
+                <p className="text-sm text-zinc-400 mb-1 leading-relaxed max-w-sm mx-auto">
+                  Masuk dengan akun Google njenengan untuk membuka spreadsheet santri dan mulai menginput data harian.
+                </p>
+
+                {/* Ornament */}
+                <div className="ornament-divider my-7 max-w-[200px] mx-auto">
+                  <span className="ornament-glyph">✦</span>
+                </div>
+
+                <GsiButton onClick={handleLogin} isLoading={isLoggingIn} />
+
+                {/* Footer */}
+                <p className="text-[10px] text-zinc-600 mt-7 leading-relaxed font-mono">
+                  Akses scope: <span className="text-zinc-500">drive.spreadsheets · profile</span>
+                  <br />
+                  Token tersimpan terenkripsi di perangkat anda.
+                </p>
               </div>
+            </div>
+
+            {spreadsheetError && (
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                className="mt-5 p-4 bg-rose-950/40 border border-rose-900/60 text-rose-300 rounded-sm text-xs font-medium leading-relaxed">
+                {spreadsheetError}
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         ) : (
           /* Main Workspace Dashboard */
           <div className="space-y-8 animate-fadeIn">
             {/* Attendance Form Dashboard */}
-            {spreadsheetInfo && (
+            {spreadsheetInfo ? (
               <AttendanceForm
                 audits={audits}
                 sheets={spreadsheetInfo.sheets}
-                onAppendRowToSheet={handleAppendRowToSheet}
                 onAppendMultipleRowsToSheet={handleAppendMultipleRowsToSheet}
                 isModifying={isModifying}
                 targetSheetName={targetSheetName}
                 userId={user?.uid}
               />
+            ) : (
+              /* Loading skeleton — shown while initial spreadsheet info & audits fetch */
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-4 space-y-6">
+                  <SkeletonCard rows={2} />
+                  <SkeletonCard rows={2} />
+                </div>
+                <div className="lg:col-span-8">
+                  <SkeletonCard rows={6} tall />
+                </div>
+              </div>
             )}
           </div>
         )}
@@ -381,27 +507,41 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/85 backdrop-blur-md"
+            onClick={() => setIsSettingsOpen(false)}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden w-full max-w-2xl"
+              initial={{ scale: 0.96, opacity: 0, y: 8 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.96, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-zinc-900 border border-zinc-800 rounded-sm overflow-hidden w-full max-w-2xl"
             >
-              <div className="flex items-center justify-between p-6 border-b border-zinc-800">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-emerald-500" />
-                  Pengaturan
-                </h2>
+              {/* Gold hairline accent */}
+              <div className="absolute inset-x-0 top-0 h-px" style={{
+                background: "linear-gradient(to right, transparent, var(--color-gold) 50%, transparent)",
+                opacity: 0.5,
+              }} />
+
+              <div className="flex items-center justify-between px-7 py-5 border-b border-zinc-800/80">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-[9px] tracking-[0.4em] uppercase font-bold" style={{ color: "var(--color-gold)" }}>
+                    Configurasi
+                  </span>
+                  <h2 className="font-display text-xl text-zinc-50 tracking-tight" style={{ fontWeight: 500 }}>
+                    Pengaturan
+                  </h2>
+                </div>
                 <button
                   onClick={() => setIsSettingsOpen(false)}
-                  className="text-zinc-400 hover:text-white transition-colors"
+                  className="text-zinc-500 hover:text-zinc-100 transition-colors p-1"
+                  aria-label="Tutup"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
-              <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+              <div className="px-7 py-6 space-y-6 max-h-[80vh] overflow-y-auto">
                 <SpreadsheetLoader
                   currentId={currentSpreadsheetId}
                   spreadsheetTitle={
@@ -412,9 +552,12 @@ export default function App() {
                   error={spreadsheetError}
                 />
 
-                <div className="bg-zinc-950 rounded-2xl border border-zinc-800 p-6 shadow-sm">
-                  <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">
-                    Sheet Tujuan (Destination)
+                <div className="relative bg-zinc-950/60 border border-zinc-800 rounded-sm p-6">
+                  <div aria-hidden className="absolute inset-2 border pointer-events-none" style={{
+                    borderColor: "var(--color-gold)", opacity: 0.12,
+                  }} />
+                  <h3 className="relative text-[9px] font-bold tracking-[0.32em] uppercase mb-4" style={{ color: "var(--color-gold)" }}>
+                    Sheet Tujuan
                   </h3>
                   <div className="space-y-3">
                     <label htmlFor="target-sheet-input" className="block text-xs font-medium text-zinc-300">
@@ -465,58 +608,43 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="bg-zinc-950 rounded-2xl border border-zinc-800 p-6 shadow-sm">
-                  <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">
-                    Tema Aplikasi
+                <div className="relative bg-zinc-950/60 border border-zinc-800 rounded-sm p-6">
+                  <div aria-hidden className="absolute inset-2 border pointer-events-none" style={{
+                    borderColor: "var(--color-gold)", opacity: 0.12,
+                  }} />
+                  <h3 className="relative text-[9px] font-bold tracking-[0.32em] uppercase mb-4" style={{ color: "var(--color-gold)" }}>
+                    Tema Tampilan
                   </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <button
-                      onClick={() => setAppTheme('dark')}
-                      className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                        appTheme === 'dark' 
-                          ? 'border-emerald-500 bg-zinc-900 shadow-[0_0_15px_-3px_rgba(16,185,129,0.3)]' 
-                          : 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 hover:border-zinc-700 text-zinc-400'
-                      }`}
-                    >
-                      <div className="w-8 h-8 rounded-full bg-zinc-900 border-2 border-zinc-800 shrink-0"></div>
-                      <span className={`text-[11px] font-bold ${appTheme === 'dark' ? 'text-zinc-100' : ''}`}>Dark (Default)</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => setAppTheme('navy')}
-                      className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                        appTheme === 'navy' 
-                          ? 'border-blue-500 bg-[#0f172a] shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]' 
-                          : 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 hover:border-zinc-700 text-zinc-400'
-                      }`}
-                    >
-                      <div className="w-8 h-8 rounded-full bg-[#0f172a] border-2 border-[#1e293b] shrink-0"></div>
-                      <span className={`text-[11px] font-bold ${appTheme === 'navy' ? 'text-zinc-100' : ''}`}>Navy Blue</span>
-                    </button>
-
-                    <button
-                      onClick={() => setAppTheme('coffee')}
-                      className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                        appTheme === 'coffee' 
-                          ? 'border-amber-500 bg-[#3d2a20] shadow-[0_0_15px_-3px_rgba(245,158,11,0.3)]' 
-                          : 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 hover:border-zinc-700 text-zinc-400'
-                      }`}
-                    >
-                      <div className="w-8 h-8 rounded-full bg-[#3d2a20] border-2 border-[#573e30] shrink-0"></div>
-                      <span className={`text-[11px] font-bold ${appTheme === 'coffee' ? 'text-zinc-100' : ''}`}>Coffee Root</span>
-                    </button>
-
-                    <button
-                      onClick={() => setAppTheme('midnight')}
-                      className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                        appTheme === 'midnight' 
-                          ? 'border-purple-500 bg-[#1e1b4b] shadow-[0_0_15px_-3px_rgba(168,85,247,0.3)]' 
-                          : 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 hover:border-zinc-700 text-zinc-400'
-                      }`}
-                    >
-                      <div className="w-8 h-8 rounded-full bg-[#1e1b4b] border-2 border-[#2e2b5b] shrink-0"></div>
-                      <span className={`text-[11px] font-bold ${appTheme === 'midnight' ? 'text-zinc-100' : ''}`}>Midnight</span>
-                    </button>
+                  <div className="relative grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {[
+                      { id: "paper",    label: "Mushaf",      sub: "Cerah",    bg: "#F4EDDE", border: "#BFAE89", accent: "#2E5D54", textOnLight: true },
+                      { id: "dark",     label: "Tarbiyyah",   sub: "Default",  bg: "#18130E", border: "#3D3225", accent: "#B89D5D" },
+                      { id: "navy",     label: "Madinah",     sub: "Biru",     bg: "#0C1428", border: "#2A3866", accent: "#82AEEC" },
+                      { id: "coffee",   label: "Qahwah",      sub: "Cokelat",  bg: "#221A12", border: "#574231", accent: "#DDA859" },
+                      { id: "midnight", label: "Lailatul",    sub: "Lembayung",bg: "#160C2E", border: "#422980", accent: "#A892E4" },
+                    ].map(t => {
+                      const active = appTheme === t.id;
+                      const labelColor = t.textOnLight ? "#18130E" : "var(--color-zinc-50, #F6F0DC)";
+                      const subColor = t.textOnLight ? "#5F523A" : "var(--color-zinc-500, #7A6B53)";
+                      return (
+                        <button
+                          key={t.id}
+                          onClick={() => setAppTheme(t.id)}
+                          className="group relative p-4 rounded-sm border flex flex-col items-start gap-2 transition-all overflow-hidden"
+                          style={{
+                            background: t.bg,
+                            borderColor: active ? t.accent : t.border,
+                            boxShadow: active ? `0 0 0 1px ${t.accent}, 0 8px 24px -16px ${t.accent}` : "none",
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full shrink-0" style={{ background: t.accent }} />
+                            <span className="font-display text-sm" style={{ fontWeight: 500, color: labelColor }}>{t.label}</span>
+                          </div>
+                          <span className="text-[9px] font-mono tracking-widest uppercase" style={{ color: subColor }}>{t.sub}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

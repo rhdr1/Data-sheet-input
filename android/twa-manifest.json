@@ -1,0 +1,51 @@
+{
+  "packageId": "app.web.gen_lang_client_0455733553.twa",
+  "host": "gen-lang-client-0455733553.web.app",
+  "name": "Mulazamah · Sistem Input Data Santri",
+  "launcherName": "Mulazamah",
+  "display": "standalone",
+  "themeColor": "#0E0C09",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#0E0C09",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://gen-lang-client-0455733553.web.app/icon-512.png",
+  "maskableIconUrl": "https://gen-lang-client-0455733553.web.app/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "/Users/haidarfahmi/Projects/Data-sheet-input/android/android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://gen-lang-client-0455733553.web.app/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://gen-lang-client-0455733553.web.app/",
+  "minSdkVersion": 21,
+  "orientation": "portrait-primary",
+  "fingerprints": [
+    {
+      "value": "1B:09:B9:99:75:46:4C:59:34:1B:A1:04:24:A4:9F:D8:B4:9D:CE:51:74:17:C1:A7:4B:76:4A:93:33:36:0D:0E"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": [],
+  "appVersion": "1"
+}

@@ -6,3 +6,21 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Firebase deploy state
+.firebase/
+
+# Android build artifacts
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+*.apk
+*.aab
+*.idsig
+
+# Signing keys — NEVER commit
+*.keystore
+*.jks
+keystore-passwords.txt

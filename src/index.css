@@ -1,99 +1,323 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Reem+Kufi:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", "Cormorant Garamond", Georgia, serif;
+  --font-arabic: "Reem Kufi", "Amiri", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-/* Custom Themes mapping over Tailwind's default zinc and emerald palettes */
+/* ───────────────────────────────────────────────────────────
+ * EDITORIAL TARBIYYAH — Warm dark theme with jade-gold accents
+ * Inspired by classical Arabic book design + modern editorial
+ * ─────────────────────────────────────────────────────────── */
+
+:root, :root[data-theme="dark"] {
+  /* Warm ink dark — base palette (replacing cold zinc) */
+  --color-zinc-950: #0E0C09;
+  --color-zinc-900: #18130E;
+  --color-zinc-850: #1F1812;
+  --color-zinc-800: #2A2118;
+  --color-zinc-700: #3D3225;
+  --color-zinc-650: #4A3D2D;
+  --color-zinc-600: #5A4A36;
+  --color-zinc-500: #7A6B53;
+  --color-zinc-400: #9C8F77;
+  --color-zinc-300: #C0B59C;
+  --color-zinc-200: #DBD0B6;
+  --color-zinc-100: #ECE4CC;
+  --color-zinc-50:  #F6F0DC;
+
+  /* Jade accent (replacing emerald) */
+  --color-emerald-500: #4A8674;
+  --color-emerald-400: #6BA796;
+  --color-emerald-450: #5C988A;
+  --color-emerald-900: #1E3F37;
+  --color-emerald-950: #0F2620;
+
+  /* Gold detail */
+  --color-gold:        #B89D5D;
+  --color-gold-deep:   #94793F;
+  --color-gold-pale:   #D8BC7C;
+
+  --paper-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.45 0 0 0 0 0.30 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
 :root[data-theme="navy"] {
-  --color-zinc-950: #020617;
-  --color-zinc-900: #0f172a;
-  --color-zinc-850: #162032; /* manual interpolate */
-  --color-zinc-800: #1e293b;
-  --color-zinc-700: #334155;
-  --color-zinc-650: #3b4b63; /* manual interpolate */
-  --color-zinc-600: #475569;
-  --color-zinc-500: #64748b;
-  --color-zinc-400: #94a3b8;
-  --color-zinc-300: #cbd5e1;
-  --color-zinc-200: #e2e8f0;
-  --color-zinc-100: #f1f5f9;
-  --color-zinc-50: #f8fafc;
-  
-  --color-emerald-500: #3b82f6;
-  --color-emerald-400: #60a5fa;
-  --color-emerald-950: #172554;
-  --color-emerald-900: #1e3a8a;
-  --color-emerald-450: #458cf7; 
+  --color-zinc-950: #050A18;
+  --color-zinc-900: #0C1428;
+  --color-zinc-850: #121C36;
+  --color-zinc-800: #1A2444;
+  --color-zinc-700: #2A3866;
+  --color-zinc-650: #324078;
+  --color-zinc-600: #3A498A;
+  --color-zinc-500: #5A6AAA;
+  --color-zinc-400: #8898C8;
+  --color-zinc-300: #B8C4DD;
+  --color-zinc-200: #D6DDEC;
+  --color-zinc-100: #E8EDF6;
+  --color-zinc-50:  #F4F7FB;
+
+  --color-emerald-500: #5A8FD8;
+  --color-emerald-400: #82AEEC;
+  --color-emerald-450: #6E9FE2;
+  --color-emerald-900: #14275A;
+  --color-emerald-950: #0A1838;
 }
 
 :root[data-theme="coffee"] {
-  --color-zinc-950: #1c140d;
-  --color-zinc-900: #2d1f14;
-  --color-zinc-850: #36261a;
-  --color-zinc-800: #453223;
-  --color-zinc-700: #6b4d37;
-  --color-zinc-650: #7d5b42;
-  --color-zinc-600: #8c6042;
-  --color-zinc-500: #a17353;
-  --color-zinc-400: #b89176;
-  --color-zinc-300: #e8d5c8;
-  --color-zinc-200: #f4e8e1;
-  --color-zinc-100: #fbf5f2;
-  --color-zinc-50: #fdfaf8;
+  --color-zinc-950: #14100B;
+  --color-zinc-900: #221A12;
+  --color-zinc-850: #2C231A;
+  --color-zinc-800: #392D20;
+  --color-zinc-700: #574231;
+  --color-zinc-650: #6A5340;
+  --color-zinc-600: #7E624A;
+  --color-zinc-500: #99785C;
+  --color-zinc-400: #B5957A;
+  --color-zinc-300: #D8BFA5;
+  --color-zinc-200: #E8D6BE;
+  --color-zinc-100: #F4E7D2;
+  --color-zinc-50:  #FAF2E1;
 
-  --color-emerald-500: #d97706;
-  --color-emerald-400: #fbbf24;
-  --color-emerald-950: #451a03;
-  --color-emerald-900: #78350f;
-  --color-emerald-450: #ea9815;
+  --color-emerald-500: #C28A3D;
+  --color-emerald-400: #DDA859;
+  --color-emerald-450: #D09849;
+  --color-emerald-900: #4E3416;
+  --color-emerald-950: #2E1F0B;
+}
+
+/* Light theme — cream paper with jade-gold accents */
+:root[data-theme="paper"] {
+  /* Reverse mapping: zinc-950 = lightest (page bg) → zinc-50 = darkest */
+  --color-zinc-950: #FBF7EE;
+  --color-zinc-900: #F4EDDE;
+  --color-zinc-850: #EDE4CD;
+  --color-zinc-800: #DDD0B2;
+  --color-zinc-700: #BFAE89;
+  --color-zinc-650: #97855E;
+  --color-zinc-600: #7A6A4A;
+  --color-zinc-500: #5F523A;
+  --color-zinc-400: #483D2A;
+  --color-zinc-300: #322B1E;
+  --color-zinc-200: #251F15;
+  --color-zinc-100: #18130E;
+  --color-zinc-50:  #0E0C09;
+
+  --color-emerald-500: #2E5D54;
+  --color-emerald-400: #1F4039;
+  --color-emerald-450: #265049;
+  --color-emerald-900: #C8DDD5;
+  --color-emerald-950: #E0EDE7;
+
+  --color-gold:        #94793F;
+  --color-gold-deep:   #6E5828;
+  --color-gold-pale:   #B89D5D;
+
+  --paper-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.30 0 0 0 0 0.22 0 0 0 0 0.10 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 
 :root[data-theme="midnight"] {
-  --color-zinc-950: #0f0728;
-  --color-zinc-900: #1a0f3c;
-  --color-zinc-850: #23164d;
-  --color-zinc-800: #2e1d5e;
-  --color-zinc-700: #472d8a;
-  --color-zinc-650: #5537a3;
-  --color-zinc-600: #6842c9;
-  --color-zinc-500: #8b5cf6;
-  --color-zinc-400: #a78bfa;
-  --color-zinc-300: #c4b5fd;
-  --color-zinc-200: #ddd6fe;
-  --color-zinc-100: #ede9fe;
-  --color-zinc-50: #f5f3ff;
+  --color-zinc-950: #0A0518;
+  --color-zinc-900: #160C2E;
+  --color-zinc-850: #1F1240;
+  --color-zinc-800: #2A1A57;
+  --color-zinc-700: #422980;
+  --color-zinc-650: #4E33A0;
+  --color-zinc-600: #5E40BB;
+  --color-zinc-500: #8265D8;
+  --color-zinc-400: #A892E4;
+  --color-zinc-300: #C7B7F0;
+  --color-zinc-200: #DCD0F6;
+  --color-zinc-100: #ECE3FA;
+  --color-zinc-50:  #F7F1FE;
 
-  --color-emerald-500: #a855f7;
-  --color-emerald-400: #c084fc;
-  --color-emerald-950: #3b0764;
-  --color-emerald-900: #581c87;
-  --color-emerald-450: #b16df8;
+  --color-emerald-500: #C99060;
+  --color-emerald-400: #E0AC7E;
+  --color-emerald-450: #D69E6F;
+  --color-emerald-900: #3D2410;
+  --color-emerald-950: #221306;
 }
 
-/* Customize active highlights & scrollbars for Bento grid */
+/* ───────────────────────────────────────────────────────────
+ * Global typography refinements
+ * ─────────────────────────────────────────────────────────── */
+
+body {
+  font-feature-settings: "cv11", "ss01", "ss03";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-mono, code, kbd {
+  font-feature-settings: "tnum", "zero", "ss01";
+}
+
+.font-display {
+  font-feature-settings: "ss01", "ss02", "lnum";
+  letter-spacing: -0.02em;
+}
+
+.font-arabic {
+  font-family: var(--font-arabic);
+  font-feature-settings: "kern";
+}
+
+/* ───────────────────────────────────────────────────────────
+ * Decorative utilities
+ * ─────────────────────────────────────────────────────────── */
+
+.paper-texture {
+  position: relative;
+}
+.paper-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--paper-noise);
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  z-index: 0;
+}
+.paper-texture > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Geometric Islamic-inspired ornament divider */
+.ornament-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-gold);
+}
+.ornament-divider::before,
+.ornament-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, currentColor 30%, currentColor 70%, transparent);
+  opacity: 0.5;
+}
+.ornament-glyph {
+  font-family: var(--font-display);
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.3em;
+  color: var(--color-gold);
+  opacity: 0.8;
+}
+
+/* Khatim — 8-point star ornament (CSS only) */
+.khatim {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+}
+.khatim::before,
+.khatim::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  opacity: 0.85;
+}
+.khatim::after {
+  transform: rotate(22.5deg);
+  opacity: 0.5;
+}
+
+/* Hairline border 0.5px */
+.border-hair {
+  border-width: 1px;
+  border-style: solid;
+}
+@media (min-resolution: 2dppx) {
+  .border-hair {
+    border-width: 0.5px;
+  }
+}
+
+/* Tabular numbers everywhere mono is used */
+.font-mono, [class*="font-mono"] {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* ───────────────────────────────────────────────────────────
+ * Animations — restrained, editorial
+ * ─────────────────────────────────────────────────────────── */
+
+@keyframes editorial-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn,
+.animate-editorial {
+  animation: editorial-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(184,157,93,0.15) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.4s linear infinite;
+}
+
+@keyframes ornament-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.ornament-spin {
+  animation: ornament-rotate 24s linear infinite;
+}
+
+/* ───────────────────────────────────────────────────────────
+ * Scrollbars (warm-tuned)
+ * ─────────────────────────────────────────────────────────── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(63, 63, 70, 0.5) transparent;
+  scrollbar-color: rgba(184, 157, 93, 0.35) transparent;
 }
-
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(63, 63, 70, 0.5);
+  background: rgba(184, 157, 93, 0.35);
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(82, 82, 91, 0.7);
+  background: rgba(184, 157, 93, 0.6);
+}
+
+/* Selection */
+::selection {
+  background: rgba(184, 157, 93, 0.35);
+  color: var(--color-zinc-50);
+}
+
+/* Smoother focus ring */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 1px solid var(--color-emerald-400);
+  outline-offset: 2px;
+}
+
+/* Disable date input native styling on dark */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) sepia(1) saturate(2) hue-rotate(20deg);
+  cursor: pointer;
+  opacity: 0.7;
 }

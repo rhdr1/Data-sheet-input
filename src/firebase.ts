@@ -1,11 +1,14 @@
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   User,
+  browserLocalPersistence,
+  setPersistence,
 } from "firebase/auth";
 import firebaseConfig from "../firebase-applet-config.json";
 
@@ -13,9 +16,15 @@ import firebaseConfig from "../firebase-applet-config.json";
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
+// Ensure persistent session across reloads
+setPersistence(auth, browserLocalPersistence).catch((e) =>
+  console.warn("Could not set auth persistence:", e)
+);
+
 export const provider = new GoogleAuthProvider();
 // We need the spreadsheets scope to read/write to user's spreadsheets
 provider.addScope("https://www.googleapis.com/auth/spreadsheets");
+provider.setCustomParameters({ prompt: "select_account" });
 
 // Flag to indicate if we are in the middle of a sign-in flow.
 let isSigningIn = false;
@@ -27,24 +36,29 @@ export const initAuth = (
   onAuthSuccess?: (user: User, token: string) => void,
   onAuthFailure?: () => void
 ) => {
-  // Cek hasil redirect bila baru saja kembali dari halaman login Google
-  getRedirectResult(auth).then((result) => {
-    if (result) {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      if (credential?.accessToken) {
-        cachedAccessToken = credential.accessToken;
-        const expiry = Date.now() + 3300 * 1000;
-        localStorage.setItem("g_oauth_token", cachedAccessToken);
-        localStorage.setItem("g_oauth_token_exp", expiry.toString());
+  // Resolve redirect-based login fallback (only relevant if popup is blocked)
+  getRedirectResult(auth)
+    .then((result) => {
+      if (result) {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        if (credential?.accessToken) {
+          cachedAccessToken = credential.accessToken;
+          const expiry = Date.now() + 3300 * 1000;
+          localStorage.setItem("g_oauth_token", cachedAccessToken);
+          localStorage.setItem("g_oauth_token_exp", expiry.toString());
+          if (onAuthSuccess && result.user) {
+            onAuthSuccess(result.user, cachedAccessToken);
+          }
+        }
       }
-    }
-  }).catch((error) => console.error("Redirect auth error:", error));
+    })
+    .catch((error) => console.error("Redirect auth error:", error));
 
   return onAuthStateChanged(auth, async (user: User | null) => {
     if (user) {
       const savedToken = localStorage.getItem("g_oauth_token");
       const expired = Number(localStorage.getItem("g_oauth_token_exp") || "0");
-      
+
       if (cachedAccessToken) {
         if (onAuthSuccess) onAuthSuccess(user, cachedAccessToken);
       } else if (savedToken && Date.now() < expired) {
@@ -63,17 +77,43 @@ export const initAuth = (
   });
 };
 
-// Must be called from a button click or user interaction
+// Must be called from a button click or user interaction.
+// Uses popup primarily (more reliable across browsers) with redirect fallback.
 export const googleSignIn = async (): Promise<{
   user: User;
   accessToken: string;
 } | null> => {
   try {
     isSigningIn = true;
-    await signInWithRedirect(auth, provider);
-    // Return null immediately because the browser will redirect
-    return null;
+    const result = await signInWithPopup(auth, provider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const accessToken = credential?.accessToken;
+    if (!accessToken) {
+      throw new Error("Tidak mendapat access token dari Google.");
+    }
+    cachedAccessToken = accessToken;
+    const expiry = Date.now() + 3300 * 1000;
+    localStorage.setItem("g_oauth_token", accessToken);
+    localStorage.setItem("g_oauth_token_exp", expiry.toString());
+    return { user: result.user, accessToken };
   } catch (error: any) {
+    // Fallback: if popup blocked or unsupported, use redirect
+    const code = error?.code || "";
+    if (
+      code === "auth/popup-blocked" ||
+      code === "auth/popup-closed-by-user" ||
+      code === "auth/cancelled-popup-request" ||
+      code === "auth/operation-not-supported-in-this-environment"
+    ) {
+      console.warn("Popup unavailable, falling back to redirect:", code);
+      try {
+        await signInWithRedirect(auth, provider);
+        return null; // browser navigates away; getRedirectResult will resolve
+      } catch (redirectErr: any) {
+        console.error("Redirect sign-in failed:", redirectErr);
+        throw redirectErr;
+      }
+    }
     console.error("Sign in error:", error);
     throw error;
   } finally {
@@ -88,8 +128,7 @@ export const googleSignIn = async (): Promise<{
 export const ensureValidToken = async (): Promise<string | null> => {
   const expired = Number(localStorage.getItem("g_oauth_token_exp") || "0");
   if (Date.now() > expired) {
-    console.log("Token expired or missing. Attempting silent re-authentication...");
-    // Token is expired, trigger popup login to refresh 
+    // Token is expired, trigger popup login to refresh
     // (Requires this function to be called from a direct click handler)
     const res = await googleSignIn();
     return res ? res.accessToken : null;

@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.web.gen_lang_client_0455733553.twa",
+        "sha256_cert_fingerprints": ["1B:09:B9:99:75:46:4C:59:34:1B:A1:04:24:A4:9F:D8:B4:9D:CE:51:74:17:C1:A7:4B:76:4A:93:33:36:0D:0E"]
+      }
+    }]
